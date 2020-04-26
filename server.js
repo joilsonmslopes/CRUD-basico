@@ -33,7 +33,7 @@ const produto = [
 ];
 
 app.get("/produtos", (request, response) => {
-
+  return response.json(produto);
 });
 
 app.post("/produtos", (request, response) => {
