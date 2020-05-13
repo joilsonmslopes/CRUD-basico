@@ -1,72 +1,86 @@
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
 
-const { uuid } = require('uuidv4');
+const { uuid } = require("uuidv4");
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 
-const produto = [
+const cadastro = [
   {
     "id": "1",
-    "genero": "Masculino",
-    "tipo": "Tenis",
-    "tamanho": 41,
-    "marca": "Olympikus"
+    "nome": "Joao",
+    "email": "contato@joao.com",
+    "likes": 0
   },
   {
     "id": "2",
-    "genero": "Feminino",
-    "tipo": "Tenis",
-    "tamanho": 37,
-    "marca": "Adidas"
+    "nome": "Maria",
+    "email": "contato@Maria.com",
+    "likes": 0
   },
   {
     "id": "3",
-    "genero": "Feminino",
-    "tipo": "Tenis",
-    "tamanho": 35,
-    "marca": "Nike"
+    "nome": "Ana",
+    "email": "contato@ana.com",
+    "likes": 0
+  },
+  {
+    "id": "4",
+    "nome": "Carlos",
+    "email": "contato@carlos.com",
+    "likes": 0
   }
 ];
 
-app.get("/produtos", (request, response) => {
-  return response.json(produto);
+app.get("/cadastros", (request, response) => {
+  return response.json(cadastro);
 });
 
-app.post("/produtos", (request, response) => {
-  const { genero, tipo, tamanho, marca } = request.body;
+app.post("/cadastros", (request, response) => {
+  const { nome, email, likes } = request.body;
 
-  const calcado = {
+  const usuario = {
     id: uuid(),
-    genero,
-    tipo,
-    tamanho,
-    marca
+    nome,
+    email,
+    likes
   };
 
-  produto.push(calcado);
+  cadastro.push(usuario);
 
-  return response.json(produto);
+  return response.json(usuario);
 });
 
-app.put("/produtos/:id", (request, response) => {
+app.put("/cadastros/:id", (request, response) => {
   const id = request.params.id;
 
-  const calcadoAlt = produto.find(calcadoAlt => calcadoAlt.id === id);
+  const usuarioAlt = cadastro.find(usuario => usuario.id == id);
 
-  if (calcadoAlt == undefined) {
-    return response.json({ error: "Produto não encontrado"})
+  if(usuarioAlt == undefined) {
+    return response.json({ error: "Usuário não encontrado." })
   }
 
-  calcadoAlt.genero = request.body.genero;
-  calcadoAlt.tipo = request.body.tipo;
-  calcadoAlt.tamanho = request.body.tamanho;
-  calcadoAlt.marca = request.body.marca;
+  usuarioAlt.nome = request.body.nome;
+  usuarioAlt.email = request.body.email;
+  
+  return response.json(usuarioAlt);
+});
 
-  return response.json(calcadoAlt)
+app.delete("/cadastros/:id", (request, response) => {
+  const id = request.params.id;
+
+  const usuarioIndex = cadastro.findIndex(usuario => usuario.id == id);
+
+  if (usuarioIndex < 0) {
+    return response.json({ error: "Usuário não encontrado ou já deletado!"})
+  }
+
+  cadastro.splice(usuarioIndex, 1)
+
+  return response.json({ message: "Usuário deletado com sucesso!"})
 })
 
 module.exports = app;
